@@ -1,0 +1,2 @@
+﻿table_id,id,email,name,access_token,api_key,api_secret_key,myshopify_domain,phone,fulfillment_service_response,address1,fulfillment_orders_opt_in,fulfillment_service,address2,zip,created_at,updated_at
+1,147644153857,ceo@arenahere.com,Arena Testing ,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,26e0144f1675ed53fcb851705b65c9eb,ae5a00dabce992762d7e658a4574af4c,arena-testing.myshopify.com,,,,0,0,,,2024-08-04 15:15:19,2024-08-04 15:15:19

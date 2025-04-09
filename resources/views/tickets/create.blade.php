@@ -1,0 +1,169 @@
+@extends('layouts.app')
+
+@section('content')
+    <div class="container">
+        <h1>Create New Ticket</h1>
+
+        <form action="{{ route('tickets.store') }}" method="POST" id="createTicketForm">
+            @csrf
+            <div class="form-group">
+                <label for="order">Order Number</label>
+                <input type="text" name="order" id="order" class="form-control" required>
+                <small id="orderStatus" class="form-text text-danger d-none">Order number is invalid</small>
+            </div>
+
+            <!-- This section will be hidden until order validation passes -->
+            <div id="additionalFields" class="d-none">
+                <div class="form-group">
+                    <label for="ticket_type">Ticket Type</label>
+                    <select name="ticket_type" id="ticket_type" class="form-control" required>
+                        <option value="" disabled selected>Choose Ticket Type</option>
+                        <option value="request">Request - طلب</option>
+                        <option value="complaint">Complaint - شكوى</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="reason">Reason</label>
+                    <select name="reason" id="reason" class="form-control" required disabled>
+                        <!-- Dynamic options based on ticket type -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="content">Note</label>
+                    <textarea name="content" id="content" class="form-control" required></textarea>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-4 d-none" id="saveTicketBtn">Save Ticket</button>
+        </form>
+    </div>
+
+    <script>
+        // Pass role_id to JavaScript
+        const roleId = @json($roleId);
+    </script>
+@endsection
+
+@section('scripts')
+    <script>
+        $("ul#ticket").siblings('a').attr('aria-expanded', 'true');
+        $("ul#ticket").addClass("show");
+        $("#add_ticket").addClass("active");
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const orderInput = document.querySelector('#order');
+            const orderStatus = document.querySelector('#orderStatus');
+            const additionalFields = document.querySelector('#additionalFields');
+            const saveTicketBtn = document.querySelector('#saveTicketBtn');
+            const ticketTypeSelect = document.querySelector('#ticket_type');
+            const reasonSelect = document.querySelector('#reason');
+
+            // Trigger order validation on Enter key press
+            orderInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Prevent form submission
+                    checkOrder();
+                }
+            });
+
+            function checkOrder() {
+                const orderNumber = orderInput.value;
+
+                // Make an AJAX request to check if order exists
+                fetch(`/check-order?order_number=${orderNumber}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.exists) {
+                            // If order exists, show additional fields and check if ticket already exists for this order
+                            additionalFields.classList.remove('d-none');
+                            orderStatus.classList.add('d-none');
+
+                            // Check if ticket already exists
+                            fetch(`/check-ticket?order_number=${orderNumber}`)
+                                .then(response => response.json())
+                                .then(ticketData => {
+                                    if (ticketData.exists) {
+                                        // Show confirmation dialog
+                                        const redirectConfirmation = confirm(
+                                            'Ticket already exists for this order. Do you want to view the existing ticket?'
+                                        );
+
+                                        if (redirectConfirmation) {
+                                            // If "Yes" is clicked, redirect to the ticket page
+                                            window.location.href = `/tickets/${ticketData.ticket_id}`;
+                                        } else {
+                                            // If "No" is clicked, stay on the create ticket page
+                                            orderInput.value = ''; // Clear order input
+                                            additionalFields.classList.add('d-none');
+                                            saveTicketBtn.classList.add('d-none');
+                                        }
+                                    } else {
+                                        saveTicketBtn.classList.remove('d-none');
+                                    }
+                                });
+                        } else {
+                            // Show error if order doesn't exist
+                            additionalFields.classList.add('d-none');
+                            saveTicketBtn.classList.add('d-none');
+                            orderStatus.classList.remove('d-none');
+                        }
+                    });
+            }
+
+            saveTicketBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('createTicketForm').submit()
+                saveTicketBtn.disabled = true;
+            });
+
+            // Update reasons based on ticket type and role_id
+            ticketTypeSelect.addEventListener('change', function() {
+                const type = this.value;
+                reasonSelect.innerHTML = '';
+                reasonSelect.disabled = false;
+
+                if (roleId === 7 || roleId === 6) { // Role ID 7
+                    if (type === 'request') {
+                        reasonSelect.innerHTML = `
+                    <option value="change_delivery_time">Change Delivery Time - نغير معاد التوصيل</option>
+                    <option value="change_delivery_location">Change Delivery Location - تغير مكان التوصيل</option>
+                    <option value="change_consignee_data">Change Consignee Data - تغيير بيانات المرسل إليه</option>
+                    <option value="cancel_and_return">Cancel & Return Order - الغاء الاوردر ورده الينا</option>
+                    <option value="speed_delivery">Speed Delivery - سرعة تواصل و تسليم الاوردر</option>
+                    <option value="payment_issues">Paid Order - مشكلة في الدفع</option>
+                    <option value="other">Other - اخري</option>
+                `;
+                    } else if (type === 'complaint') {
+                        reasonSelect.innerHTML = `
+                    <option value="shipment_not_delivered">Shipment Not Delivered - لم يتم تسليم الشحنة</option>
+                    <option value="delivery_delay">Delivery Delay - تأخير التسليم</option>
+                    <option value="mistreatment">Mistreatment - سوء المعاملة</option>
+                    <option value="other">Other - اخري</option>
+                `;
+                    }
+                } else if (roleId === 8) { // Role ID 8
+                    if (type === 'request') {
+                        reasonSelect.innerHTML = `
+                    <option value="client_need_call">Client Needs Call - العميل محتاج نكلمه</option>
+                    <option value="client_forgot_order">Client Forgot Order - العميل مش فاكر الأوردر</option>
+                    <option value="duplicated_order">Duplicated Order - أوردر مكرر</option>
+                    <option value="no_answer">No Answer - لا احد يجيب</option>
+                    <option value="refuse_receiving">Refuse Receiving - رفض الاستلام</option>
+                    <option value="reschedules_delivery">Reschedules Delivery - إعادة جدولة التسليم</option>
+                    <option value="other">Other - اخري</option>
+                `;
+                    } else if (type === 'complaint') {
+                        reasonSelect.innerHTML = `
+                    <option value="wrong_number">Wrong Number - رقم العميل خاطئ</option>
+                    <option value="wrong_address">Wrong Address - عنوان خاطئ</option>
+                    <option value="wrong_total_price">Wrong Total Price - اجمالي المنتج خاطئ</option>
+                    <option value="payment_issues">Payment Issues - مشكله في الدفع</option>
+                `;
+                    }
+                }
+            });
+        });
+    </script>
+@endsection

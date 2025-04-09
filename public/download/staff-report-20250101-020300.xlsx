@@ -1,0 +1,11 @@
+"Order Number",Channel,"Payment Method",Subtotal,Shipping,Total,Status,"Assigned To"," Created Date"
+Lvs40165,,Cash,225.00,50.00,275,shipped,Aya,"2024-11-30 02:20:31",
+Lvs40230,,Cash,899.10,50.00,-49.9,shipped,"Manar Mahmoud ","2024-11-30 03:39:19",
+Lvs40346,,Cash,855.00,60.00,915,shipped,"Hader Magdy","2024-11-30 06:36:55",
+Lvs39832,,Cash,584.10,50.00,634.1,cancelled,LevoileSt,"2024-11-29 08:15:54",
+Lvs39126,,Cash,1078.40,60.00,1138.4,cancelled,LevoileSt,"2024-11-28 01:00:50",
+Lvs40269,,Cash,1690.40,80.00,1770.4,cancelled,LevoileSt,"2024-11-30 04:57:44",
+Lvs39864,,Cash,154.80,90.00,244.8,cancelled,LevoileSt,"2024-11-29 09:16:28",
+Lvs40472,,Cash,368.00,50.00,418,cancelled,LevoileSt,"2024-11-30 08:39:13",
+Lvs38050,,Cash,1693.20,90.00,1783.2,cancelled,LevoileSt,"2024-11-24 07:56:45",
+Lvs38680,,Cash,198.00,50.00,248,cancelled,LevoileSt,"2024-11-26 10:32:24",

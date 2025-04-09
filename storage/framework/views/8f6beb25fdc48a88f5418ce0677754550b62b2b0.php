@@ -1,0 +1,367 @@
+
+<?php $__env->startSection('css'); ?>
+    <link href="<?php echo e(asset('assets/css/bootstrap-rtl.min.css')); ?>" rel="stylesheet">
+    <style>
+        .pagination {
+            font-size: 14px;
+            /* Adjust this size to make the links smaller */
+        }
+
+        .page-link {
+            padding: 0.25rem 0.75rem;
+            /* Control padding for smaller buttons */
+            font-size: 0.875rem;
+            /* Smaller font size */
+        }
+    </style>
+<?php $__env->stopSection(); ?>
+<?php $__env->startSection('content'); ?>
+
+    <div class="pagetitle">
+        <div class="row">
+
+            <div class="col-8">
+                <h1>Returned Orders</h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="<?php echo e(route('home')); ?>">Home</a></li>
+                        <li class="breadcrumb-item">Reports</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card">
+                    <form class="" action="" id="sort_orders" method="GET">
+                        <div class="card-header row gutters-5">
+                            <div class="row col-12">
+
+                                <div class="col-2 height-50">
+
+                                    <div class="shadow2 text-center"
+                                        style="background-color: rgb(166, 166, 164); color:white">
+                                        <strong>All Returns</strong>
+                                        <br>
+                                        <?php echo e($returns_count); ?>
+
+                                    </div>
+
+                                </div>
+                                <div class="col-2 height-50">
+
+                                    <div class="shadow2 text-center"
+                                        style="background-color: rgb(166, 166, 164); color:white">
+                                        <strong>Amount Returns</strong>
+                                        <br>
+                                        <?php echo e($returns_amount); ?> LE.
+                                    </div>
+
+                                </div>
+                                <div class="col-2 height-50">
+
+                                    <div class="shadow2 text-center"
+                                        style="background-color: rgb(166, 166, 164); color:white">
+                                        <strong>Received Returns</strong>
+                                        <br>
+                                        <?php echo e($returns_all->where('status', 'Returned')->count()); ?>
+
+                                    </div>
+
+                                </div>
+                                <div class="col-2 height-50">
+
+                                    <div class="shadow2 text-center"
+                                        style="background-color: rgb(166, 166, 164); color:white">
+                                        <strong>Received Amount</strong>
+                                        <br>
+                                        <?php echo e($returns_all->where('status', 'Returned')->sum('amount')); ?> LE.
+                                    </div>
+
+                                </div>
+                                <div class="col-2 height-50">
+
+                                    <div class="shadow2 text-center"
+                                        style="background-color: rgb(166, 166, 164); color:white">
+                                        <strong>In Progress Returns</strong>
+                                        <br>
+                                        <?php echo e($returns_all->where('status', '!=', 'Returned')->count()); ?>
+
+                                    </div>
+
+                                </div>
+                                <div class="col-2">
+
+                                    <div class="shadow2 text-center"
+                                        style="background-color: rgb(166, 166, 164); color:white">
+                                        <strong>In Progress Amount</strong>
+                                        <br>
+                                        <?php echo e($returns_all->where('status', '!=', 'Returned')->sum('amount')); ?> LE.
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="card-header row gutters-5">
+                            <div class="row col-12 justify-content-center">
+
+                                <div class="col-sm-2 justify-content-center">
+                                    <div class="form-group mb-0">
+                                        <label for="date">Filter By Date</label>
+                                        <input type="date" class="form-control" value="<?php echo e($date); ?>"
+                                            name="date" placeholder="<?php echo e('Filter by Return date'); ?>" data-format="DD-MM-Y"
+                                            data-separator=" to " data-advanced-range="true" autocomplete="off">
+                                    </div>
+                                </div>
+                                <div class="col-sm-3 justify-content-center">
+                                    <div class="">
+                                        <label for="date">Filter By Return Stauts</label>
+                                        <select class="form-select aiz-selectpicker" name="delivery_status"
+                                            id="delivery_status">
+                                            <option value="" <?php if($delivery_status == ''): ?> selected <?php endif; ?>>Select
+                                            </option>
+                                            <option value="In Progress" <?php if($delivery_status == 'In Progress'): ?> selected <?php endif; ?>>
+                                                In Progress</option>
+                                            <option value="Returned" <?php if($delivery_status == 'Returned'): ?> selected <?php endif; ?>>
+                                                Returned</option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3 justify-content-center">
+                                    <div class="form-group mb-0">
+                                        <label for="date">Search Return</label>
+                                        <input type="text" class="form-control" id="search"
+                                            name="search"<?php if(isset($sort_search)): ?> value="<?php echo e($sort_search); ?>" <?php endif; ?>
+                                            placeholder="<?php echo e('Type Order or Return No & Hit Enter'); ?>">
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 justify-content-center">
+                                    <label for="paginate">Show Returns</label>
+                                    <select class="form-select aiz-selectpicker" name="paginate" id="paginate">
+                                        <option value="0">Choose Number To SHow</option>
+                                        <option value="15">15 Return</option>
+                                        <option value="50">50 Return</option>
+                                        <option value="100">100 Return</option>
+                                        <option value="1000">All</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-1 m-2 justify-content-center">
+                                    <div class="form-group mt-4">
+                                        <button type="submit" class="btn btn-primary">Filter</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-header row gutters-5">
+                            <div class="row col-12">
+                                <div class="col-sm-3">
+                                    <h6 class="d-inline-block pt-10px">Total Returns</h6>
+                                </div>
+                                <div class="col-sm-4">
+                                    <h6 class="d-inline-block pt-10px"><?php echo e($orders_count); ?> Orders</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Returned Orders</h5>
+                            
+
+                            <!-- Table with stripped rows -->
+                            <table class="table datatable" id="example">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <div class="form-group">
+                                                <div class="aiz-checkbox-inline">
+                                                    <label class="aiz-checkbox">
+                                                        <input type="checkbox" class="check-all">
+                                                        <span class="aiz-square-check"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th scope="col" class="text-center">Return No</th>
+                                        <th scope="col" class="text-center">Order No</th>
+                                        <th scope="col" class="text-center">Status</th>
+                                        <th scope="col" class="text-center">Note</th>
+                                        <th scope="col" class="text-center">Old Order Amount</th>
+                                        <th scope="col" class="text-center">Return Amount</th>
+                                        <th scope="col" class="text-center">New Order Amount</th>
+                                        <th scope="col" class="text-center">Quantity</th>
+                                        <th scope="col" class="text-center">Returned By</th>
+                                        <th scope="col" class="text-center">Shipping On</th>
+                                        <th scope="col" class="text-center">Created Date</th>
+                                        <th scope="col" class="text-center">Options</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if(isset($returns)): ?>
+                                        <?php $__currentLoopData = $returns; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $return): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <?php if($return): ?>
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <div class="aiz-checkbox-inline">
+                                                                <label class="aiz-checkbox">
+                                                                    <input type="checkbox" class="check-one" name="id[]"
+                                                                        value="<?php echo e($return->id); ?>">
+                                                                    <span class="aiz-square-check"></span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        Lvr<?php echo e($return->return_number); ?>
+
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <a class="btn-link"
+                                                            href="<?php echo e(route('shopify.order.prepare', $return->order_number)); ?>">Lvs<?php echo e($return->order_number); ?></a>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <?php if($return->status == 'In Progress'): ?>
+                                                            <span
+                                                                class="badge badge-inline badge-danger"><?php echo e($return->status); ?></span>
+                                                        <?php elseif($return->status == 'Returned'): ?>
+                                                            <span
+                                                                class="badge badge-inline badge-info"><?php echo e($return->status); ?></span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td class="text-center"><?php echo e($return->note??"-"); ?></td>
+                                                    <td class="text-center">
+                                                        <?php echo e($return->order->total_price); ?></td>
+                                                    <td class="text-center"><?php echo e($return->amount); ?></td>
+                                                    <td class="text-center"><?php echo e($return->order->total_price - $return->amount); ?></td>
+                                                    <td class="text-center">
+                                                        <?php echo e($return->qty); ?>
+
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <?php echo e($return->user ? $return->user->name : '-'); ?>
+
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <?php echo e(ucfirst($return->shipping_on)); ?>
+
+                                                    </td>
+                                                    <td><?php echo e(date('Y-m-d h:i:s', strtotime($return->created_at))); ?></td>
+                                                    <td class="text-center">
+                                                        <div class="col-5  mr-2 ml-2">
+                                                            <div class="row mb-1">
+                                                                <a class="btn btn-dark"
+                                                                    href="<?php echo e(route('prepare.generate-return-invoice', $return->id)); ?>"
+                                                                    title="Generate Invoice">
+                                                                    <i class="bi bi-printer"></i>
+                                                                </a>
+                                                                Invoice
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            <?php endif; ?>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    <?php endif; ?>
+                                </tbody>
+                                <tfoot>
+
+                                    <tr>
+                                        <th class="text-center"><?php echo e($returns_count); ?></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+
+
+                                </tfoot>
+
+                            </table>
+
+                            <!-- End Table with stripped rows -->
+
+                        </div>
+
+                    </form>
+                    <div class="row">
+                        <div class="col-12">
+                            <nav>
+                                <ul class="pagination pagination-sm">
+                                    <?php echo e($returns->links()); ?>
+
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('scripts'); ?>
+    <script type="text/javascript" src="<?php echo asset('vendor/jquery/jquery.min.js'); ?>"></script>
+    <script type="text/javascript">
+        $("ul#reports").siblings('a').attr('aria-expanded', 'true');
+        $("ul#reports").addClass("show");
+        $("#returned_report").addClass("active");
+        $(document).on("change", ".check-all", function() {
+            if (this.checked) {
+                // Iterate each checkbox
+                $('.check-one:checkbox').each(function() {
+                    this.checked = true;
+                });
+            } else {
+                $('.check-one:checkbox').each(function() {
+                    this.checked = false;
+                });
+            }
+
+        });
+        $("#shipping_company").change(function() {
+            var data = new FormData($('#sort_orders')[0]);
+            var selected_name = $(this).find("option:selected").text();
+            var selected_user = this.value;
+            data.append('emp_name', selected_name);
+
+            if (selected_user == 0) {
+
+            } else {
+                if (confirm('Are You Sure to Assign These order to ' + selected_name)) {
+                    $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url: "<?php echo e(route('bulk-returns-shipped')); ?>",
+                        type: 'POST',
+                        data: data,
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        success: function(response) {
+                            if (response == 0) {
+                                window.location.href =
+                                    '<?php echo e(route('return-pickups.index', ['msg' => 'success'])); ?>';
+                            } else {
+                                window.location.href =
+                                    '<?php echo e(route('return-pickups.index', ['msg' => 'failed'])); ?>';
+                            }
+                        }
+                    });
+                } else {}
+            }
+
+            console.log(selected_name);
+            console.log(selected_user);
+            console.log(data);
+        });
+    </script>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /home/1216098.cloudwaysapps.com/ycnnbqfzvc/public_html/resources/views/reports/returned_orders.blade.php ENDPATH**/ ?>
